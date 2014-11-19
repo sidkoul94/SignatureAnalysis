@@ -26,7 +26,7 @@ public class Main extends JFrame {
 	public static int Yb;
 	public static int x, y, width, height;
 
-	public static void main(String[] arg) {
+	/*public static void main(String[] arg) {
 
 		File file = new File(
 				"/home/micky/workspace/Signature/res/Signatures/sid1.png");
@@ -34,14 +34,21 @@ public class Main extends JFrame {
 		 ExtractFeature(InputImage);
 		 PrintValues();
 		
+	}*/
+	
+	public Main(File file){
+		InputImage = LoadImage(file);
+		 ExtractFeature(InputImage);
 	}
 
-	private static void IntializeFrame(BufferedImage InputImage) {
+	private static void IntializeFrame(BufferedImage InputImage,String title) {
 
 		int ImgWidth, ImgHeight;
+		
 		ImgWidth = InputImage.getWidth();
 		ImgHeight = InputImage.getHeight();
-		JFrame Frame = new Main();
+		JFrame Frame = new JFrame();
+		Frame.setTitle(title);
 		Jlabel PicLabel = new Jlabel(InputImage);
 		Frame.getContentPane().add(PicLabel, BorderLayout.CENTER);
 		Frame.setVisible(true);
@@ -58,7 +65,7 @@ public class Main extends JFrame {
 		g.drawLine(0, Yb, timg.getWidth(), Yb);
 		g.drawRect(x, y, width, height);
 		g.dispose();
-		IntializeFrame(timg);
+		IntializeFrame(timg,"GrayScale Image");
 	}
 
 	private static BufferedImage LoadImage(File file) {
@@ -93,7 +100,7 @@ public class Main extends JFrame {
 		SlantAngle = FtEx.BaseAngle();
 		Entropy = FtEx.entropy();
 		Kurtosis = FtEx.KurtosisX();
-		IntializeFrame(FtEx.returnImage());
+		IntializeFrame(FtEx.returnImage() , "Binary Image");
 	}
 
 	public static void PrintValues() {
