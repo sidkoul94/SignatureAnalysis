@@ -117,7 +117,7 @@ public class Slant {
 		int ImgWidth, ImgHeight;
 		ImgWidth = InputImage.getWidth();
 		ImgHeight = InputImage.getHeight();
-		JFrame Frame = new Main();
+		JFrame Frame = new JFrame();
 		Jlabel PicLabel = new Jlabel(InputImage);
 		Frame.getContentPane().add(PicLabel, BorderLayout.CENTER);
 		Frame.setVisible(true);

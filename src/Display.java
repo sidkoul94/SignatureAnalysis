@@ -22,7 +22,7 @@ public class Display extends JFrame {
 	JLabel lt = new JLabel("AspectRatio", JLabel.LEFT), ct = new JLabel(
 			"SlantAngle", JLabel.LEFT),
 			rt = new JLabel("Skewness", JLabel.LEFT),
-			et = new JLabel("Entropy"), kt = new JLabel("Kutosis");
+			et = new JLabel("Entropy"), kt = new JLabel("Kurtosis");
 	JLabel ltans = new JLabel(), ctans= new JLabel(), rtans= new JLabel(), etans= new JLabel(), ktans= new JLabel();
 	File file;
 

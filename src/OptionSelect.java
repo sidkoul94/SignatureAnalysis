@@ -17,7 +17,7 @@ import javax.swing.JTextField;
 
 public class OptionSelect extends JFrame {
 
-	JButton save = new JButton("Save"), load = new JButton("Load");
+	JButton save = new JButton("Select"), load = new JButton("Analyze");
 	JTextField file = new JTextField(30);
 	File nfile;
 	JLabel lb = new JLabel("File");
@@ -71,6 +71,7 @@ public class OptionSelect extends JFrame {
 				new Display(nfile);
 			} catch (Exception e) {
 				e.printStackTrace();
+				file.setText(" ");
 				JOptionPane.showMessageDialog(OptionSelect.this,
 						"Error File cant be Opened..(Inside OS)");
 			}

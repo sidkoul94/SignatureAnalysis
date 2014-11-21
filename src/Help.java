@@ -233,7 +233,7 @@ public class Help {
 		ImgWidth = InputImage.getWidth();
 		ImgHeight = InputImage.getHeight();
 
-		Main Frame = new Main();
+		JFrame Frame = new JFrame();
 
 		Jlabel PicLabel = new Jlabel(InputImage);
 		Frame.getContentPane().add(PicLabel, BorderLayout.CENTER);
