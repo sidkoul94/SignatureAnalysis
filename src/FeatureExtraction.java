@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
+import PreProcessing.Thinning;
+import PreProcessing.Binarize;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -21,21 +22,29 @@ public class FeatureExtraction {
 	// number of pixels in the InputImage
 	private int numOfPixels = 0;
 
-	// Constructor
+	// Constructor : Using Binarizing algorithm
 	public FeatureExtraction(BufferedImage InputImage) {
-		this.InputImage = new BufferedImage(InputImage.getWidth(),
-				InputImage.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
-		Graphics g = this.InputImage.createGraphics();
-		g.drawImage(InputImage, 0, 0, null);
-		g.dispose();
+
+		// To get a Binarized Thinned Image
+		// Thinned Image
+		this.InputImage = Thinning.Thin(
+		// Binarize Image
+				Binarize.binarize(InputImage, 230));
+
+		// Display Thinned Image on a panel
+		IntializeFrame(this.InputImage);
+
+		// To get GrayImage
 		Gray_InputImage = new BufferedImage(InputImage.getWidth(),
 				InputImage.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
-		g = this.Gray_InputImage.createGraphics();
+		Graphics g = this.Gray_InputImage.createGraphics();
 		g.drawImage(InputImage, 0, 0, null);
 		g.dispose();
+
+		// Calculate CentreOfGravity , Histogram
 		COG();
 		histogram();
-		//IntializeFrame(Gray_InputImage);
+
 	}
 
 	public BufferedImage returnImage() {
@@ -53,7 +62,7 @@ public class FeatureExtraction {
 		Frame.getContentPane().add(PicLabel, BorderLayout.CENTER);
 		Frame.setVisible(true);
 		Frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		Frame.setSize(ImgWidth, ImgHeight + 35);
+		Frame.setSize(ImgWidth, ImgHeight + 30);
 
 	}
 
@@ -74,6 +83,91 @@ public class FeatureExtraction {
 		Xb = sumx / numOfPixels;
 		Yb = sumy / numOfPixels;
 
+		System.out.println("Using previous Algo , X -> " + Xb + " Y -> " + Yb);
+
+	}
+
+	// Graphing the horizontal projections
+	public void horizontalProjections() {
+
+		int[] horArr = new int[this.InputImage.getHeight()];
+
+		for (int i = 0; i < this.InputImage.getHeight(); i++) {
+
+			int cnt = 0;
+			for (int j = 0; j < this.InputImage.getWidth(); j++) {
+				if (this.InputImage.getRGB(j, i) == Color.BLACK.getRGB())
+					cnt++;
+			}
+			horArr[i] = cnt;
+		}
+		new makeGraph(horArr, "Horizontal Projections");
+		int vcog = calcCOG(horArr);
+		System.out.println("Y - > " + vcog);
+	}
+
+	private int calcCOG(int[] data) {
+
+		int den = 0;
+		int num = 0;
+		for (int i = 0; i < data.length; i++) {
+			den += data[i];
+			num += i * data[i];
+		}
+		return (int) (num / den);
+	}
+
+	// Graphing the vertical projections
+	public void verticalProjections() {
+
+		int[] verArr = new int[this.InputImage.getWidth()];
+		for (int i = 0; i < this.InputImage.getWidth(); i++) {
+			int cnt = 0;
+			for (int j = 0; j < this.InputImage.getHeight(); j++) {
+				if (this.InputImage.getRGB(i, j) == Color.BLACK.getRGB())
+					cnt++;
+			}
+			verArr[i] = cnt;
+		}
+		new makeGraph(verArr, "VerticalProjections");
+		int hcog = calcCOG(verArr);
+		System.out.println("X -> " + hcog);
+	}
+
+	// Calculate BaseLine Shift
+	public void baselineShift() {
+
+		int verLeft, verRight;
+		int partition = this.InputImage.getWidth() / 2;
+
+		int[] horArrLeft = new int[this.InputImage.getHeight()];
+		int[] horArrRight = new int[this.InputImage.getHeight()];
+
+		// Calculate LHS Horizontal Projections
+		for (int j = 0; j < this.InputImage.getHeight(); j++) {
+			int cnt = 0;
+			for (int i = 0; i < partition; i++) {
+				if (this.InputImage.getRGB(i, j) == Color.BLACK.getRGB())
+					cnt++;
+			}
+			horArrLeft[j] = cnt;
+		}
+
+		verLeft = calcCOG(horArrLeft);
+
+		// Calculate RHS Horizontal Projections
+		for (int j = 0; j < this.InputImage.getHeight(); j++) {
+			int cnt = 0;
+			for (int i = partition; i < this.InputImage.getWidth(); i++) {
+				if (this.InputImage.getRGB(i, j) == Color.BLACK.getRGB())
+					cnt++;
+			}
+			horArrRight[j] = cnt;
+		}
+
+		verRight = calcCOG(horArrRight);
+
+		System.out.println("BaseLineShift = " + (verRight - verLeft));
 	}
 
 	// Calculating the Aspect Ratio
@@ -145,13 +239,6 @@ public class FeatureExtraction {
 					break;
 			}
 		}
-
-		/*
-		 * System.out.println(bottomx + " " + topx); System.out.println(righty +
-		 * " " + lefty); System.out.println("Height of the image is:" + (bottomx
-		 * - topx)); System.out.println("Width of the image is:" + (righty -
-		 * lefty));
-		 */
 
 		width = righty - lefty;
 		height = bottomx - topx;
@@ -274,10 +361,10 @@ public class FeatureExtraction {
 				ent += (Pi * lnPi);
 			}
 		}
-		
-		if(ent != 0)
+
+		if (ent != 0)
 			return (-ent);
-		
+
 		return 0;
 	}
 

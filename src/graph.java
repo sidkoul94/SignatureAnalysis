@@ -1,16 +1,23 @@
-import java.awt.*;
-import java.awt.font.*;
-import java.awt.geom.*;
-import java.util.LinkedList;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineMetrics;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 
-public class graph extends JPanel {
-	int[] data ;
+public class graph extends JPanel {            
+
+	int[] data;
 	final int PAD = 20;
 
 	public graph(int[] data) {
 		this.data = data;
+		
 	}
 
 	protected void paintComponent(Graphics g) {
@@ -57,12 +64,11 @@ public class graph extends JPanel {
 			g2.draw(new Line2D.Double(x1, y1, x2, y2));
 		}
 		// Mark data points.
-		/*g2.setPaint(Color.red);
-		for (int i = 0; i < data.length; i++) {
-			double x = PAD + i * xInc;
-			double y = h - PAD - scale * data[i];
-			g2.fill(new Ellipse2D.Double(x - 2, y - 2, 4, 4));
-		}*/
+		
+		  g2.setPaint(Color.red); for (int i = 0; i < data.length; i++) {
+		  double x = PAD + i * xInc; double y = h - PAD - scale * data[i];
+		  g2.fill(new Ellipse2D.Double(x - 2, y - 2, 4, 4)); }
+		 
 	}
 
 	private int getMax() {
@@ -74,5 +80,4 @@ public class graph extends JPanel {
 		return max;
 	}
 
-	
 }

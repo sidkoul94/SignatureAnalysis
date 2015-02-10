@@ -9,42 +9,66 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
+//The following class takes the input , scales it to a size of 300x100
+//Uses FeatureExtraction class to extract all the features and prints them on the screen...
 public class Main extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
 	public static BufferedImage InputImage = new BufferedImage(300, 100,
 			BufferedImage.TYPE_BYTE_BINARY);
+
 	// Features to be extracted out of the input signature
-	public static double AspectRatio;
-	public static double SlantAngle;
-	public static double Variance;
-	public static double Skewness;
-	public static double Entropy;
-	public static double Kurtosis;
-	public static int Xb;
-	public static int Yb;
-	public static int x, y, width, height;
+	public double AspectRatio;
+	public double SlantAngle;
+	public double Variance;
+	public double Skewness;
+	public double Entropy;
+	public double Kurtosis;
+	public double JointEntropy;
 
-	/*public static void main(String[] arg) {
+	// Extra parameters..!!
+	public int Xb;
+	public int Yb;
+	public int x, y, width, height;
 
-		File file = new File(
-				"/home/micky/workspace/Signature/res/Signatures/sid1.png");
-		InputImage = LoadImage(file);
-		 ExtractFeature(InputImage);
-		 PrintValues();
-		
-	}*/
-	
-	public Main(File file){
-		InputImage = LoadImage(file);
-		 ExtractFeature(InputImage);
+	public static void main(String[] arg) throws Exception {
+
+		 new Main(new File("/home/micky/Desktop/sid2.png"));
+
 	}
 
-	private static void IntializeFrame(BufferedImage InputImage,String title) {
+	public static BufferedImage Filter(BufferedImage img, double alpha) {
+		BufferedImage rotatedImage = new BufferedImage(img.getWidth(),
+				img.getHeight(), img.getType());
+		alpha = alpha * 3.14 / 180;
+		for (int i = 0; i < img.getWidth(); i++) {
+			for (int j = 0; j < img.getHeight(); j++) {
+				int Xnew = (int) (i - (j * Math.tan(alpha)));
+				int rgb = img.getRGB(i, j);
+				if (Xnew > 0 && Xnew < img.getWidth()) {
+					rotatedImage.setRGB(Xnew, j, rgb);
+				} else {
+					rotatedImage.setRGB(i, j, rgb);
+				}
+			}
+		}
+
+		return rotatedImage;
+
+	}
+
+	public Main(File file) throws Exception {
+		InputImage = LoadImage(file);
+		// IntializeFrame(InputImage,"img");
+
+		ExtractFeature(InputImage);
+	}
+
+	private static void IntializeFrame(BufferedImage InputImage, String title) {
 
 		int ImgWidth, ImgHeight;
-		
+
 		ImgWidth = InputImage.getWidth();
 		ImgHeight = InputImage.getHeight();
 		JFrame Frame = new JFrame();
@@ -57,7 +81,7 @@ public class Main extends JFrame {
 
 	}
 
-	private static void draw(ARatio ar) {
+	private void draw(ARatio ar) {
 		BufferedImage timg = InputImage;
 		Graphics g = timg.createGraphics();
 		g.setColor(Color.RED);
@@ -65,15 +89,14 @@ public class Main extends JFrame {
 		g.drawLine(0, Yb, timg.getWidth(), Yb);
 		g.drawRect(x, y, width, height);
 		g.dispose();
-		IntializeFrame(timg,"GrayScale Image");
+		IntializeFrame(timg, "GrayScale Image");
 	}
 
 	private static BufferedImage LoadImage(File file) {
 		try {
 			BufferedImage img = ImageIO.read(file);
-			Image Img = img.getScaledInstance(300, 100,
-					img.SCALE_AREA_AVERAGING);
-			img = new BufferedImage(300, 100, BufferedImage.TYPE_BYTE_GRAY);
+			Image Img = img.getScaledInstance(300, 100, Image.SCALE_SMOOTH);
+			img = new BufferedImage(300, 100, img.getType());
 			Graphics g = img.createGraphics();
 			g.drawImage(Img, 0, 0, null);
 			g.dispose();
@@ -84,7 +107,7 @@ public class Main extends JFrame {
 		}
 	}
 
-	public static void ExtractFeature(BufferedImage IpImage) {
+	public void ExtractFeature(BufferedImage IpImage) {
 
 		FeatureExtraction FtEx = new FeatureExtraction(IpImage);
 		Xb = FtEx.Xb;
@@ -100,10 +123,13 @@ public class Main extends JFrame {
 		SlantAngle = FtEx.BaseAngle();
 		Entropy = FtEx.entropy();
 		Kurtosis = FtEx.KurtosisX();
-		IntializeFrame(FtEx.returnImage() , "Binary Image");
+		FtEx.horizontalProjections();
+		FtEx.verticalProjections();
+		FtEx.baselineShift();
+		IntializeFrame(FtEx.returnImage(), "Binary Image");
 	}
 
-	public static void PrintValues() {
+	public void PrintValues() {
 		System.out.println("AspectRatio is " + AspectRatio);
 		System.out.println("Skewness is " + Skewness);
 		System.out.println("BaseAngle is " + SlantAngle);

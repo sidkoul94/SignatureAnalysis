@@ -16,17 +16,22 @@ import javax.swing.JPanel;
 
 public class Display extends JFrame {
 
+	// North panel
 	JPanel np = new JPanel();
+	// Center panel
 	JPanel cp = new JPanel();
+	// South panel
 	JPanel sp = new JPanel();
+	// Labels
 	JLabel lt = new JLabel("AspectRatio", JLabel.LEFT), ct = new JLabel(
 			"SlantAngle", JLabel.LEFT),
 			rt = new JLabel("Skewness", JLabel.LEFT),
 			et = new JLabel("Entropy"), kt = new JLabel("Kurtosis");
-	JLabel ltans = new JLabel(), ctans= new JLabel(), rtans= new JLabel(), etans= new JLabel(), ktans= new JLabel();
+	JLabel ltans = new JLabel(), ctans = new JLabel(), rtans = new JLabel(),
+			etans = new JLabel(), ktans = new JLabel();
 	File file;
 
-	public Display(File file) {
+	public Display(File file) throws Exception {
 		this.file = file;
 		BufferedImage img = null;
 		try {
@@ -43,6 +48,8 @@ public class Display extends JFrame {
 		cp.setBackground(Color.WHITE);
 		add(cp, BorderLayout.CENTER);
 		sp.setLayout(new GridLayout(5, 1, 10, 10));
+
+		// ExtractFeatures and setValues to labels
 		setValues();
 		sp.add(lt);
 		sp.add(ltans);
@@ -63,7 +70,7 @@ public class Display extends JFrame {
 
 	}
 
-	private void setValues() {
+	private void setValues() throws Exception {
 		Main obj = new Main(file);
 		ltans.setText(obj.AspectRatio + "");
 		ctans.setText(obj.SlantAngle + " ");
@@ -79,7 +86,7 @@ public class Display extends JFrame {
 		nimg = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
 		Graphics g = nimg.createGraphics();
 		g.drawImage(timg, 0, 0, null);
-		return new JLabel(new ImageIcon(nimg) , JLabel.CENTER);
+		return new JLabel(new ImageIcon(nimg), JLabel.CENTER);
 	}
 
 }
