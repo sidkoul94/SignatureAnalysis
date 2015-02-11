@@ -1,13 +1,13 @@
 package Display;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
+
 import javax.swing.JFrame;
 
 public class CreateWindow {
 
-	private void CreateWindow() {
+	private CreateWindow() {
 	}
 
 	public static void ofImage(BufferedImage Image, String Title) {
